@@ -1,4 +1,12 @@
+using AuthTest.Filter;
+using AuthTest.JWTToken;
+using AuthTest.NSwag;
+using AuthTest.Request.Login;
+using System.Security.Claims;
+
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
+var env = builder.Environment;
 
 // Add services to the container.
 
@@ -7,25 +15,37 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// auth & JWT
-builder.Services.AddAuthentication("Bearer").AddJwtBearer();
-builder.Services.AddAuthorization();
+// NSwag
+builder.Services.NSwagConfigSetting(env);
+
+// Auth & JWT
+builder.Services.AddSingleton<JwtHelpers>();
+builder.Services.JwtConfig(config);
+
+
+// memory cache
+builder.Services.AddMemoryCache();
+// auth filter
+builder.Services.AddScoped<AuthLogOutFilter>();
+
+// Â^¨ú httpcontext
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    //app.UseSwagger();
+    app.UseOpenApi();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
 
-app.MapControllers().RequireAuthorization();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireAuthorization();
 
 app.Run();
