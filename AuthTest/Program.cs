@@ -10,7 +10,10 @@ var env = builder.Environment;
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+// Auth filter
+//builder.Services.AddScoped<AuthLogOutFilter>(); // 祅Filter 本虫 controller attribute
+builder.Services.AddControllers(options => options.Filters.Add<AuthLogOutFilter>()); // 祅Filter 本办
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -22,11 +25,9 @@ builder.Services.NSwagConfigSetting(env);
 builder.Services.AddSingleton<JwtHelpers>();
 builder.Services.JwtConfig(config);
 
-
 // memory cache
 builder.Services.AddMemoryCache();
-// auth filter
-builder.Services.AddScoped<AuthLogOutFilter>();
+
 
 // 耝 httpcontext
 builder.Services.AddHttpContextAccessor();
@@ -46,6 +47,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// 办 Auth
 app.MapControllers().RequireAuthorization();
 
 app.Run();

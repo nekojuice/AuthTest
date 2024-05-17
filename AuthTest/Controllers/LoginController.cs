@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace AuthTest.Controllers;
 
-[ServiceFilter<AuthLogOutFilter>]
+//[ServiceFilter<AuthLogOutFilter>]
 [Route("api/[controller]/[action]")]
 [ApiController]
 public class LoginController : ControllerBase
